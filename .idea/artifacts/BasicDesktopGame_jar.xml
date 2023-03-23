@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BasicDesktopGame:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BasicDesktopGame_jar</output-path>
+    <root id="archive" name="BasicDesktopGame.jar">
+      <element id="module-output" name="BasicDesktopGame" />
+    </root>
+  </artifact>
+</component>
