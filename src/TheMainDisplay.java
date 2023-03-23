@@ -103,11 +103,11 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         Random rand = new Random();
         if(IslandSpawned){
             theItemLabelx = rand.nextInt(theIslandLabelx,theIslandLabelx+theIslandLabelWidth-theItemLabelWidth);
-            theItemLabely = rand.nextInt(theIslandLabely,theIslandLabely+theIslandLabelHeight-theItemLabelHeight);
+            theItemLabely = rand.nextInt(theIslandLabely+theItemLabelHeight,theIslandLabely+theIslandLabelHeight);
         }
         else {
             theItemLabelx = rand.nextInt(theItemLabelWidth, screenWidth - 2 * theItemLabelWidth);
-            theItemLabely = rand.nextInt(theItemLabelHeight, screenHeight - 2 * theItemLabelHeight);
+            theItemLabely = rand.nextInt(theItemLabelHeight * 2, screenHeight - theItemLabelHeight);
         }
 
         theItemLabel = new JLabel();
@@ -124,12 +124,12 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         theCoinLabelHeight = screenHeight/40;
         Random rand = new Random();
         if(IslandSpawned){
-            theCoinLabelx = rand.nextInt(theIslandLabelx,theIslandLabelx+theIslandLabelWidth-theCoinLabelWidth);
-            theCoinLabely = rand.nextInt(theIslandLabely,theIslandLabely+theIslandLabelHeight-theCoinLabelHeight);
+            theCoinLabelx = rand.nextInt(theIslandLabelx,theIslandLabelx + theIslandLabelWidth - theCoinLabelWidth);
+            theCoinLabely = rand.nextInt(theIslandLabely + theCoinLabelHeight,theIslandLabely + theIslandLabelHeight);
         }
         else {
-            theCoinLabelx = rand.nextInt(theCoinLabelWidth, screenWidth - 2 * theCoinLabelWidth);
-            theCoinLabely = rand.nextInt(theCoinLabelHeight, screenHeight - 2 * theCoinLabelHeight);
+            theCoinLabelx = rand.nextInt(theCoinLabelWidth, screenWidth - theCoinLabelWidth);
+            theCoinLabely = rand.nextInt(theCoinLabelHeight * 2, screenHeight);
         }
 
         theCoinLabel = new JLabel();
@@ -214,7 +214,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             Random rand = new Random();
             if(IslandSpawned){
                 theCoinLabelx = rand.nextInt(theIslandLabelx+theCoinLabelWidth,theIslandLabelx+theIslandLabelWidth-theCoinLabelWidth);
-                theCoinLabely = rand.nextInt(theIslandLabely-theCoinLabelHeight,theIslandLabely+theIslandLabelHeight-theCoinLabelHeight);
+                theCoinLabely = rand.nextInt(theIslandLabely+theCoinLabelHeight,theIslandLabely+theIslandLabelHeight-theCoinLabelHeight);
             }
             else {
                 theCoinLabelx = rand.nextInt(theCoinLabelWidth, screenWidth - 2 * theCoinLabelWidth);
