@@ -17,6 +17,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
 
     public static JLabel ControlsMenuLabel;
     public static boolean ControlsMenu = false;
+    public static boolean DebugMode = false;
 
     public static int theCharacterLabelWidth, theCharacterLabelHeight, theCharacterLabelx, theCharacterLabely;
     public static int theFoodLabelx, theFoodLabely, theFoodLabelWidth, theFoodLabelHeight;
@@ -24,8 +25,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     public static int theIslandLabelx,theIslandLabely,theIslandLabelWidth, theIslandLabelHeight;
     public static int thePortalLabelx,thePortalLabely,thePortalLabelWidth, thePortalLabelHeight;
 
-    public static int MovementDistx = screenWidth/40;
-    public static int MovementDisty = screenHeight/40;
+    public static int MovementDistx = screenWidth/50;
+    public static int MovementDisty = screenHeight/50;
     public static int Score = 0, MovementsMade, MovementCapIncrement = 10, MovementCap = 25, PocketChange;
     public static boolean QuickMovement = true, KeyPressed, Locked, IslandSpawned = false, PortalSpawned = false;
 
@@ -70,7 +71,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             ControlsMenuLabel = new JLabel();
             ControlsMenuLabel.setHorizontalAlignment(0);
             ControlsMenuLabel.setBounds(theControlsMenuLabelx, theControlsMenuLabely, theControlsMenuLabelWidth, theControlsMenuLabelHeight);
-            ControlsMenuLabel.setText("<html>This is the controls menu.<br/><br/>WASD is used to move.<br/>Q toggles quick movement.<br/>B toggles debug mode. </html>");
+            ControlsMenuLabel.setText("<html>This is the controls menu.<br/><br/>WASD is used to move.<br/>Q toggles quick movement.<br/>B toggles debug mode.<br/>C toggles the controls menu. </html>");
             ControlsMenuLabel.setVisible(false);
             mainframe.add(ControlsMenuLabel);
     }
@@ -283,10 +284,13 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     @Override
     public void keyPressed (KeyEvent e){
         if(!KeyPressed||QuickMovement) {
-            KeyPressed=true;
             int keyCode = e.getKeyCode();
+            KeyPressed=true;
             theCenterLabel.setText(e.getKeyChar() + " Key Pressed");
+
             switch (keyCode) {
+
+                //Movement Controls
                 case KeyEvent.VK_W -> {
                     CheckLoseConditions();
                     if (!Locked) {
@@ -306,7 +310,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                         }
                     }
                     CheckAndUpdate();
-                }
+                } //Up
                 case KeyEvent.VK_A -> {
                     CheckLoseConditions();
                     if (!Locked) {
@@ -326,7 +330,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                         }
                     }
                     CheckAndUpdate();
-                }
+                } //Left
                 case KeyEvent.VK_S -> {
                     CheckLoseConditions();
                     if (!Locked) {
@@ -346,12 +350,12 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                         }
                     }
                     CheckAndUpdate();
-                }
+                } //Down
                 case KeyEvent.VK_D -> {
                     CheckLoseConditions();
                     if (!Locked) {
                         if (IslandSpawned){
-                            if(theCharacterLabelx+MovementDistx > theIslandLabelx+theIslandLabelWidth-theCharacterLabelHeight){
+                            if(theCharacterLabelx+MovementDistx > theIslandLabelx+theIslandLabelWidth-theCharacterLabelWidth){
                                 theCenterLabel.setText("Can't leave the island yet!");
                             }
                             else{
@@ -366,18 +370,9 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                         }
                     }
                     CheckAndUpdate();
-                }
-                case KeyEvent.VK_Q -> {
-                    if (!QuickMovement) {
-                        QuickMovement = true;
-                        theCenterLabel.setText("Quick Movement Enabled.");
-                    }
-                    else {
-                        QuickMovement = false;
-                        theCenterLabel.setText("Quick Movement Disabled.");
-                    }
-                } //Toggles quick movement
+                } //Right
 
+                //Non-Movement Controls
                 case KeyEvent.VK_C -> {
                     if(ControlsMenu){
                         ControlsMenuLabel.setVisible(false);
@@ -388,28 +383,70 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                         ControlsMenu=true;
                     }
                 } //Toggles Controls Menu
+                case KeyEvent.VK_B -> {
+                    if(!DebugMode){
+                        DebugMode=true;
+                        theCenterLabel.setText("Debug Mode Enabled.");
+                    }
+                    else{
+                        DebugMode=false;
+                        theCenterLabel.setText("Debug Mode Disabled.");
+                    }
+                } //Toggles Debug Mode
+                case KeyEvent.VK_Q -> {
+                    if (!QuickMovement) {
+                        QuickMovement = true;
+                        theCenterLabel.setText("Quick Movement Enabled.");
+                    }
+                    else {
+                        QuickMovement = false;
+                        theCenterLabel.setText("Quick Movement Disabled.");
+                    }
+                } //Toggles Quick Movement
 
+                //Debug Mode
                 case (KeyEvent.VK_UP) -> {
-                    MovementCap = MovementCap + MovementCapIncrement;
-                    UpdateScoreBoard();
-                    theCenterLabel.setText("UP Key Pressed");
-                }
+                    if (DebugMode) {
+                        MovementCap = MovementCap + MovementCapIncrement;
+                        UpdateScoreBoard();
+                        theCenterLabel.setText("Movement Cap Increased");
+                    }
+                    else {
+                        theCenterLabel.setText("UP Key Pressed");
+                    }
+                } //Currently Increases Movement Cap
                 case (KeyEvent.VK_DOWN) -> {
-                    MovementCap = MovementCap - MovementCapIncrement;
-                    UpdateScoreBoard();
-                    theCenterLabel.setText("DOWN Key Pressed");
-                }
+                    if (DebugMode) {
+                        MovementCap = MovementCap - MovementCapIncrement;
+                        UpdateScoreBoard();
+                        theCenterLabel.setText("Movement Cap Decreased");
+                    }
+                    else {
+                        theCenterLabel.setText("DOWN Key Pressed");
+                    }
+                } //Currently Decreases Movement Cap
                 case (KeyEvent.VK_LEFT) -> {
-                    Score--;
-                    UpdateScoreBoard();
-                    theCenterLabel.setText("LEFT Key Pressed");
-                }
+                    if (DebugMode) {
+                        Score--;
+                        UpdateScoreBoard();
+                        theCenterLabel.setText("Score Decreased");
+                    }
+                    else {
+                        theCenterLabel.setText("UP Key Pressed");
+                    }
+                } //Currently Decreases Score
                 case (KeyEvent.VK_RIGHT) -> {
-                    Score++;
-                    UpdateScoreBoard();
-                    theCenterLabel.setText("WRONG Key Pressed");
-                }
+                    if (DebugMode) {
+                        Score++;
+                        UpdateScoreBoard();
+                        theCenterLabel.setText("Score Increased");
+                    }
+                    else {
+                        theCenterLabel.setText("UP Key Pressed");
+                    }
+                } //Currently Increases Score
 
+                //General Key Events
                 case KeyEvent.VK_SHIFT -> theCenterLabel.setText("SHIFT Key Pressed");
                 case KeyEvent.VK_CAPS_LOCK -> theCenterLabel.setText("CAPS LOCK Key Pressed");
                 case KeyEvent.VK_CONTROL -> theCenterLabel.setText("CONTROL Key Pressed");
@@ -430,8 +467,9 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                 case KeyEvent.VK_F12 -> {
                     theCenterLabel.setText("Exiting App...");
                     System.exit(0);
-                }
+                } //Exits Program
             }
+
         }
     }
 
