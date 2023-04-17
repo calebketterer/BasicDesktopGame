@@ -13,43 +13,50 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     public static int screenWidth = (int)size.getWidth();
     public static int screenHeight = (int)size.getHeight();
     public static JFrame mainframe = new JFrame("mainframe");
-    public static JLabel theCenterLabel, theScoreLabel, theCharacterLabel, theFoodLabel, theIslandLabel, theSecondIslandLabel, theCoinLabel, thePortalLabel;
 
-    public static JLabel ControlsMenuLabel;
-    public static boolean ControlsMenu = false;
+    // The Menu Labels
+    public static JLabel theCenterLabel, theScoreLabel, ControlsMenuLabel, TradingMenuLabel;
+    public static boolean CenterLabelVisibility, ControlsMenuVisibility, TradingMenuVisibility = false;
     public static boolean DebugMode = false;
 
-    public static int theCharacterLabelWidth, theCharacterLabelHeight, theCharacterLabelx, theCharacterLabely;
+    // The Character, Island, and Item Labels
+    public static JLabel theCharacterLabel, theFoodLabel, theIslandLabel, theSecondIslandLabel, theCoinLabel, theNPCLabel;
+    public static int theCharacterLabelx, theCharacterLabely, theCharacterLabelWidth, theCharacterLabelHeight;
     public static int theFoodLabelx, theFoodLabely, theFoodLabelWidth, theFoodLabelHeight;
     public static int theCoinLabelx,theCoinLabely,theCoinLabelWidth, theCoinLabelHeight;
+    public static int theNPCLabelx, theNPCLabely, theNPCLabelWidth, theNPCLabelHeight;
     public static int theIslandLabelx,theIslandLabely,theIslandLabelWidth, theIslandLabelHeight;
     public static int theSecondIslandLabelx,theSecondIslandLabely,theSecondIslandLabelWidth, theSecondIslandLabelHeight;
-    public static int keyCode;
 
+    // Constants and Scorekeepers
     public static int MovementDistx = screenWidth/80;
     public static int MovementDisty = screenHeight/80;
-    public static int Score = 0, MovementsMade, MovementCapIncrement = 10, MovementCap = 25, PocketChange;
-    public static boolean QuickMovement = true, KeyPressed, Locked, IslandSpawned, SecondIslandSpawned = false;
+    public static int Score = 0, MovementsMade, MovementCapIncrement = 5, MovementCap = 25, PocketChange;
+
+    // Other Misc.
+    public static int keyCode;
+    public static boolean QuickMovement = true, KeyPressed, Locked, IslandSpawned, SecondIslandSpawned, NearNPC = false;
     public static boolean UpperBoundaryReached, LeftBoundaryReached, BottomBoundaryReached, RightBoundaryReached, BoundaryReached;
 
     public void paint(Graphics g) {
         setBackground(new Color (0,0,0,0));
         g.setColor(Color.WHITE);
-        g.drawString("Version 1.0 (2023.04.04)",20,20);
+        g.drawString("Version 1.0 (2023.17.04)",20,20);
         g.drawString("Screen Width: " + screenWidth,20,40);
         g.drawString("Screen Height: " + screenHeight,20,60);
     } //Version and Screen Info
 
+    // Menu Labels
     public static void SpawnCenterLabel(){
-        int theCenterLabelWidth = screenWidth/4;
-        int theCenterLabelHeight = screenHeight/8;
+        int theCenterLabelWidth = screenWidth/6;
+        int theCenterLabelHeight = screenHeight/10;
         int theCenterLabelx = screenWidth/2 - theCenterLabelWidth/2;
         int theCenterLabely = 0;
 
         theCenterLabel = new JLabel();
         theCenterLabel.setHorizontalAlignment(0);
         theCenterLabel.setBounds (theCenterLabelx, theCenterLabely, theCenterLabelWidth, theCenterLabelHeight);
-        theCenterLabel.setText("<html>Use WASD to move. <br/>C Toggles Controls Menu.</html>");
+        theCenterLabel.setText("<html><center>Use WASD to move. <br/>C Toggles Controls Menu.</center></html>");
         mainframe.add(theCenterLabel);
     }
     public static void SpawnScoreBoard(){
@@ -77,7 +84,21 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             ControlsMenuLabel.setVisible(false);
             mainframe.add(ControlsMenuLabel);
     }
+    public static void SpawnTradingMenu(){
+        int theTradingMenuLabelWidth = screenWidth / 8;
+        int theTradingMenuLabelHeight = screenHeight / 2;
+        int theTradingMenuLabelx = 11*screenWidth / 12 - theTradingMenuLabelWidth / 2;
+        int theTradingMenuLabely = screenHeight / 2 - theTradingMenuLabelHeight / 2;
 
+        TradingMenuLabel = new JLabel();
+        TradingMenuLabel.setHorizontalAlignment(0);
+        TradingMenuLabel.setBounds(theTradingMenuLabelx, theTradingMenuLabely, theTradingMenuLabelWidth, theTradingMenuLabelHeight);
+        TradingMenuLabel.setText("<html>This is the Trading menu!<br/><br/>The NPC is selling:<br/><br/>Item 1<br/>Item 2<br/>Item 3 </html>");
+        TradingMenuLabel.setVisible(false);
+        mainframe.add(TradingMenuLabel);
+    }
+
+    // Character and Islands Labels
     public static void SpawnCharacter(){
         theCharacterLabelWidth = screenWidth/40;
         theCharacterLabelHeight = screenHeight/40;
@@ -105,7 +126,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         Random rand = new Random();
         theIslandLabelWidth = rand.nextInt(screenWidth/8,screenWidth*2/8);
         theIslandLabelHeight = rand.nextInt(screenHeight/8,screenHeight*2/8);
-        theIslandLabelx = rand.nextInt(0,screenWidth-theIslandLabelWidth);
+        theIslandLabelx = rand.nextInt(0,screenWidth*11/12-theIslandLabelWidth);
         theIslandLabely = rand.nextInt(screenHeight/8,screenHeight-theIslandLabelHeight);
 
         theIslandLabel = new JLabel();
@@ -127,6 +148,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         mainframe.add(theSecondIslandLabel);
         SecondIslandSpawned=true;
     }
+
+    // Item Labels
     public static void SpawnFood(){
         theFoodLabelWidth = screenWidth/40;
         theFoodLabelHeight = screenHeight/40;
@@ -177,35 +200,72 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         theCoinLabel.setText("COIN");
         mainframe.add(theCoinLabel);
     }
+    public static void SpawnNPC(){
+        theNPCLabelWidth = screenWidth/50;
+        theNPCLabelHeight = screenHeight/40;
+        Random rand = new Random();
+        if(IslandSpawned){
+            if(SecondIslandSpawned){
+                theNPCLabelx = rand.nextInt(theSecondIslandLabelx, theSecondIslandLabelx + theSecondIslandLabelWidth - theNPCLabelWidth);
+                theNPCLabely = rand.nextInt(theSecondIslandLabely + theNPCLabelHeight, theSecondIslandLabely + theSecondIslandLabelHeight - theCharacterLabelHeight);
+            }
+            else{
+                theNPCLabelx = rand.nextInt(theIslandLabelx, theIslandLabelx + theIslandLabelWidth - theNPCLabelWidth);
+                theNPCLabely = rand.nextInt(theIslandLabely + theNPCLabelHeight, theIslandLabely + theIslandLabelHeight - theCharacterLabelHeight);
+            }
+        }
+        else {
+            theNPCLabelx = rand.nextInt(theNPCLabelWidth, screenWidth - theNPCLabelWidth);
+            theNPCLabely = rand.nextInt(theNPCLabelHeight * 2, screenHeight);
+        }
 
+        theNPCLabel = new JLabel();
+        theNPCLabel.setHorizontalAlignment(0);
+        theNPCLabel.setBounds (theNPCLabelx, theNPCLabely, theNPCLabelWidth, theNPCLabelHeight);
+        theNPCLabel.setText("NPC");
+        mainframe.add(theNPCLabel);
+    }
+    public static void SpawnSunkenTreasure(){}//invisible until close, gains nothing, 5, or 15 pocket change upon collection.
+    public static void SpawnMysteryFood(){}//lose 5 movement or gain 5 or 15 movement points upon collection.
+
+    // Checking and Update Methods
     public void CheckAndUpdate(){
         CheckLoseConditions();
         UpdateScoreBoard();
         UpdateCharacter();
         CheckFoodLoc();
         CheckCoinLoc();
+        CheckNPCLoc();
     }
     public static void UpdateScoreBoard(){
-        theScoreLabel.setText("<html>Your score is " + Score + ". <br/> You made " + MovementsMade + " movements. <br/> You have " + (MovementCap - MovementsMade) + " movements left. <br/> You have " + PocketChange + " coins in pocket change.</html>");
+        theScoreLabel.setText("<html><center>Your score is " + Score + ". <br/> You made " + MovementsMade + " movements. <br/> You have " + (MovementCap - MovementsMade) + " movements left. <br/> You have " + PocketChange + " coins in pocket change.</center></html>");
     }
-    public void UpdateCharacter(){
+    public static void UpdateCharacter(){
         if(!Locked) {
             theCharacterLabel.setBounds(theCharacterLabelx, theCharacterLabely, theCharacterLabelWidth, theCharacterLabelHeight);
         }
-        else {theCenterLabel.setText("You ran out of moves. Game Over.");}
+        else {theCenterLabel.setText("<html><center>You ran out of moves.<br/>Game Over.<br/>Press F12 to Exit. </center><html>");}
     }
     public void CheckBoundaries(){
         if(IslandSpawned){
             UpperBoundaryReached = theCharacterLabely - MovementDisty < theIslandLabely;
             LeftBoundaryReached = theCharacterLabelx - MovementDistx < theIslandLabelx;
-            BottomBoundaryReached = theCharacterLabely + MovementDisty > theIslandLabely+theIslandLabelHeight-theCharacterLabelHeight;
-            RightBoundaryReached = theCharacterLabelx + MovementDistx > theIslandLabelx+theIslandLabelWidth-theCharacterLabelWidth;
-            if (UpperBoundaryReached||LeftBoundaryReached||BottomBoundaryReached||RightBoundaryReached){
-                BoundaryReached=true;
-            }
+            BottomBoundaryReached = theCharacterLabely + MovementDisty > theIslandLabely + theIslandLabelHeight - theCharacterLabelHeight;
+            RightBoundaryReached = theCharacterLabelx + MovementDistx > theIslandLabelx + theIslandLabelWidth - theCharacterLabelWidth;
+            BoundaryReached = UpperBoundaryReached || LeftBoundaryReached || BottomBoundaryReached || RightBoundaryReached;
+
             if(SecondIslandSpawned){
+                if(theSecondIslandLabelx<theIslandLabelx){
+                    LeftBoundaryReached = theCharacterLabelx - MovementDistx < theSecondIslandLabelx;
+                }
+                if(theSecondIslandLabelx+theSecondIslandLabelWidth<theIslandLabelx+theIslandLabelWidth){
+                    LeftBoundaryReached = theCharacterLabelx - MovementDistx < theSecondIslandLabelx;
+                }
                 if(theSecondIslandLabely<theIslandLabely) {
                     UpperBoundaryReached = theCharacterLabely - MovementDisty < theSecondIslandLabely;
+                }
+                if(theSecondIslandLabely+theSecondIslandLabelHeight>theIslandLabely+theIslandLabelHeight) {
+                    UpperBoundaryReached = theCharacterLabely - MovementDisty > theSecondIslandLabely;
                 }
                 else {
                     UpperBoundaryReached = theCharacterLabely - MovementDisty > theSecondIslandLabely;
@@ -219,7 +279,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             MovementCap=MovementCap+MovementCapIncrement;
             UpdateScoreBoard();
 
-            theCenterLabel.setText("<html>You collected the food! <br/> Score and movement cap increased.</html>");
+            theCenterLabel.setText("<html><center>You collected the food! <br/> Score and movement cap increased.</center></html>");
 
             Random rand = new Random();
             if(IslandSpawned){
@@ -239,7 +299,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             Score = Score + 3;
             UpdateScoreBoard();
 
-            theCenterLabel.setText("<html>You collected some pocket change! <br/> Score and movement cap increased.</html>");
+            theCenterLabel.setText("<html><center>You collected some pocket change! <br/> Score and movement cap increased.</center></html>");
 
             Random rand = new Random();
             if(IslandSpawned){
@@ -253,6 +313,40 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             theCoinLabel.setBounds(theCoinLabelx,theCoinLabely,theCoinLabelWidth,theCoinLabelHeight);
         }
     }
+    public void CheckNPCLoc() {
+        if (abs((theCharacterLabelx + theCharacterLabelWidth) / 2 - (theNPCLabelx + theNPCLabelWidth) / 2) < 10 && abs((theCharacterLabely + theCharacterLabelHeight) / 2 - (theNPCLabely + theNPCLabelHeight) / 2) < 10) {
+            TradingMenuLabel.setVisible(true);
+            TradingMenuVisibility = true;
+            NearNPC = true;
+            theCenterLabel.setText("<html><center>You're near an NPC! <br/> Click T to toggle their trade offers.</center></html>");
+        } else {
+            if (NearNPC) {
+                PocketChange=PocketChange+5;
+                UpdateScoreBoard();
+
+                Random rand = new Random();
+                if(IslandSpawned){
+                    theNPCLabelx = rand.nextInt(theIslandLabelx+theNPCLabelWidth,theIslandLabelx+theIslandLabelWidth-theNPCLabelWidth);
+                    theNPCLabely = rand.nextInt(theIslandLabely+theNPCLabelHeight,theIslandLabely+theIslandLabelHeight-theNPCLabelHeight);
+                }
+                else {
+                    theNPCLabelx = rand.nextInt(theNPCLabelWidth, screenWidth - 2 * theNPCLabelWidth);
+                    theNPCLabely = rand.nextInt(theNPCLabelHeight, screenHeight - 2 * theNPCLabelHeight);
+                }
+                theNPCLabel.setBounds(theNPCLabelx,theNPCLabely,theNPCLabelWidth,theNPCLabelHeight);
+
+
+                /*theNPCLabelx = theNPCLabely = 0;
+                mainframe.remove(theNPCLabel);
+                mainframe.revalidate();
+                mainframe.repaint();*/
+
+            }
+            TradingMenuLabel.setVisible(false);
+            TradingMenuVisibility = false;
+            NearNPC = false;
+        }
+    }
     public void CheckLoseConditions(){
         if(MovementsMade>=MovementCap){
             Locked = true;
@@ -260,6 +354,11 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         if(MovementsMade<MovementCap){
             Locked = false;
         }
+    }
+
+    // Misc. Methods
+    public static void MainframeTitleSetter(){
+        mainframe.setTitle("This is, in fact, the main frame");
     }
 
     @Override
@@ -270,7 +369,6 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         if(!KeyPressed||QuickMovement) {
             keyCode = e.getKeyCode();
             KeyPressed=true;
-            theCenterLabel.setText(e.getKeyChar() + " Key Pressed");
 
             switch (keyCode) {
 
@@ -366,35 +464,30 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
 
                 //Non-Movement Controls
                 case KeyEvent.VK_C -> {
-                    if(ControlsMenu){
+                    if(ControlsMenuVisibility){
                         ControlsMenuLabel.setVisible(false);
-                        ControlsMenu=false;
+                        ControlsMenuVisibility =false;
                     }
                     else{
                         ControlsMenuLabel.setVisible(true);
-                        ControlsMenu=true;
+                        ControlsMenuVisibility =true;
                     }
                 } //Toggles Controls Menu
-                case KeyEvent.VK_B -> {
-                    if(!DebugMode){
-                        DebugMode=true;
-                        theCenterLabel.setText("Debug Mode Enabled.");
+                case KeyEvent.VK_B -> DebugMode= !DebugMode; //Toggles Debug Mode
+                case KeyEvent.VK_Q -> QuickMovement = !QuickMovement; //Toggles Quick Movement
+                case KeyEvent.VK_T -> {
+                    if (NearNPC && TradingMenuVisibility) {
+                        TradingMenuLabel.setVisible(false);
+                        TradingMenuVisibility = false;
                     }
-                    else{
-                        DebugMode=false;
-                        theCenterLabel.setText("Debug Mode Disabled.");
-                    }
-                } //Toggles Debug Mode
-                case KeyEvent.VK_Q -> {
-                    if (!QuickMovement) {
-                        QuickMovement = true;
-                        theCenterLabel.setText("Quick Movement Enabled.");
+                        else if(NearNPC){
+                        TradingMenuLabel.setVisible(true);
+                        TradingMenuVisibility = true;
                     }
                     else {
-                        QuickMovement = false;
-                        theCenterLabel.setText("Quick Movement Disabled.");
+                        theCenterLabel.setText("You are not near an NPC.");
                     }
-                } //Toggles Quick Movement
+                } //Toggles Trading Menu
 
                 //Debug Mode
                 case (KeyEvent.VK_UP) -> {
@@ -459,7 +552,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                 case KeyEvent.VK_F12 -> {
                     theCenterLabel.setText("Exiting App...");
                     System.exit(0);
-                } //Exits Program
+                }//Exits Program
+                //default -> theCenterLabel.setText(e.getKeyChar() + " Key Pressed");
             }
 
         }
@@ -469,6 +563,22 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     public void keyReleased(KeyEvent e) {
         int keyCode = e.getKeyCode();
         switch (keyCode) {
+            case KeyEvent.VK_B -> {
+                if(DebugMode) {
+                    theCenterLabel.setText("Debug Mode Enabled.");
+                }
+                else {
+                    theCenterLabel.setText("Debug Mode Disabled.");
+                }
+            }
+            case KeyEvent.VK_C -> {
+                if(ControlsMenuVisibility) {
+                    theCenterLabel.setText("Controls Menu Opened.");
+                }
+                else {
+                    theCenterLabel.setText("Controls Menu Closed.");
+                }
+            }
             case KeyEvent.VK_Q -> {
                 if(QuickMovement) {
                     theCenterLabel.setText("Quick Movement Enabled.");
@@ -477,7 +587,15 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                     theCenterLabel.setText("Quick Movement Disabled.");
                 }
             }
-            default -> theCenterLabel.setText ("Press F12 to exit.");
+            case KeyEvent.VK_T -> {
+                if(NearNPC&&TradingMenuVisibility) {
+                    theCenterLabel.setText("Trading Menu Opened");
+                }
+                if (NearNPC&&!TradingMenuVisibility){
+                    theCenterLabel.setText("Trading Menu Closed.");
+                }
+            }
+            //default -> theCenterLabel.setText ("Press F12 to exit.");
         }
         KeyPressed=false;
     }
@@ -497,23 +615,26 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     @Override
     public void mouseExited(MouseEvent e) {}
 
+    // Sets up the mainframe, including the size, title, and contents.
     public static void initializeMainframe(){
 
         TheMainDisplay D = new TheMainDisplay();
 
         mainframe.setSize(screenWidth, screenHeight);
-        mainframe.setTitle("This is, in fact, the main frame");
+        MainframeTitleSetter();
         mainframe.addKeyListener(D);
         mainframe.addMouseListener(D);
 
         SpawnCenterLabel();
         SpawnControlsMenuLabel();
+        SpawnScoreBoard();
+        SpawnTradingMenu();
         SpawnIsland();
         //SpawnSecondIsland();
-        SpawnScoreBoard();
         SpawnCharacter();
         SpawnFood();
         SpawnCoin();
+        SpawnNPC();
 
         mainframe.setUndecorated(true);
         mainframe.add(D);
@@ -521,7 +642,5 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         mainframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    public static void main(String[] args) {
-        initializeMainframe();
-    }
+    public static void main(String[] args) {initializeMainframe();}
 }
