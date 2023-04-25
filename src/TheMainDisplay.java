@@ -43,7 +43,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     public void paint(Graphics g) {
         setBackground(new Color (0,0,0,0));
         g.setColor(Color.WHITE);
-        g.drawString("Version 1.0 (2023.24.04)",20,20);
+        g.drawString("Version 1.0 (2023.04.25)",20,20);
         g.drawString("Screen Width: " + screenWidth,20,40);
         g.drawString("Screen Height: " + screenHeight,20,60);
     } //Version and Screen Info
@@ -95,7 +95,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         TradingMenuLabel = new JLabel();
         TradingMenuLabel.setHorizontalAlignment(0);
         TradingMenuLabel.setBounds(theTradingMenuLabelx, theTradingMenuLabely, theTradingMenuLabelWidth, theTradingMenuLabelHeight);
-        TradingMenuLabel.setText("<html>This is the Trading menu!<br/><br/>The NPC is selling:<br/><br/>Item 1<br/>Item 2<br/>Item 3 </html>");
+        TradingMenuLabel.setText("<html>This is the Trading menu!<br/><br/>The NPC is selling:<br/><br/>1: Item 1<br/>2: Item 2<br/>3: Item 3 </html>");
         TradingMenuLabel.setVisible(false);
         mainframe.add(TradingMenuLabel);
     }
@@ -126,8 +126,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     }
     public static void SpawnIsland(){
         Random rand = new Random();
-        theIslandLabelWidth = rand.nextInt(screenWidth*2/16,screenWidth*5/16);
-        theIslandLabelHeight = rand.nextInt(screenHeight*2/16,screenHeight*5/16);
+        theIslandLabelWidth = rand.nextInt(screenWidth*2/16,screenWidth*4/16);
+        theIslandLabelHeight = rand.nextInt(screenHeight*2/16,screenHeight*4/16);
         theIslandLabelx = rand.nextInt(0,screenWidth*11/12-theIslandLabelWidth);
         theIslandLabely = rand.nextInt(screenHeight/8,screenHeight-theIslandLabelHeight);
 
@@ -153,7 +153,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
 
     // Item Labels
     public static void SpawnFood(){
-        theFoodLabelWidth = screenWidth/40;
+        theFoodLabelWidth = screenWidth/35;
         theFoodLabelHeight = screenHeight/40;
         Random rand = new Random();
         if(IslandSpawned){
@@ -207,14 +207,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         theNPCLabelHeight = screenHeight/40;
         Random rand = new Random();
         if(IslandSpawned){
-            if(SecondIslandSpawned){
-                theNPCLabelx = rand.nextInt(theSecondIslandLabelx, theSecondIslandLabelx + theSecondIslandLabelWidth - theNPCLabelWidth);
-                theNPCLabely = rand.nextInt(theSecondIslandLabely + theNPCLabelHeight, theSecondIslandLabely + theSecondIslandLabelHeight - theCharacterLabelHeight);
-            }
-            else{
-                theNPCLabelx = rand.nextInt(theIslandLabelx, theIslandLabelx + theIslandLabelWidth - theNPCLabelWidth);
-                theNPCLabely = rand.nextInt(theIslandLabely + theNPCLabelHeight, theIslandLabely + theIslandLabelHeight - theCharacterLabelHeight);
-            }
+            theNPCLabelx = rand.nextInt(theIslandLabelx, theIslandLabelx + theIslandLabelWidth - theNPCLabelWidth);
+            theNPCLabely = rand.nextInt(theIslandLabely + theNPCLabelHeight, theIslandLabely + theIslandLabelHeight - theCharacterLabelHeight);
         }
         else {
             theNPCLabelx = rand.nextInt(theNPCLabelWidth, screenWidth - theNPCLabelWidth);
