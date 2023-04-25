@@ -20,11 +20,13 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     public static boolean DebugMode = false;
 
     // The Character, Island, and Item Labels
-    public static JLabel theCharacterLabel, theFoodLabel, theIslandLabel, theSecondIslandLabel, theCoinLabel, theNPCLabel;
+    public static JLabel theCharacterLabel, theFoodLabel, theIslandLabel, theSecondIslandLabel, theCoinLabel, theNPCLabel, theSunkenTreasureLabel, theMysteryFoodLabel;
     public static int theCharacterLabelx, theCharacterLabely, theCharacterLabelWidth, theCharacterLabelHeight;
     public static int theFoodLabelx, theFoodLabely, theFoodLabelWidth, theFoodLabelHeight;
     public static int theCoinLabelx,theCoinLabely,theCoinLabelWidth, theCoinLabelHeight;
     public static int theNPCLabelx, theNPCLabely, theNPCLabelWidth, theNPCLabelHeight;
+    public static int theSunkenTreasureLabelx,theSunkenTreasureLabely,theSunkenTreasureLabelWidth, theSunkenTreasureLabelHeight;
+    public static int theMysteryFoodLabelx,theMysteryFoodLabely,theMysteryFoodLabelWidth, theMysteryFoodLabelHeight;
     public static int theIslandLabelx,theIslandLabely,theIslandLabelWidth, theIslandLabelHeight;
     public static int theSecondIslandLabelx,theSecondIslandLabely,theSecondIslandLabelWidth, theSecondIslandLabelHeight;
 
@@ -41,7 +43,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     public void paint(Graphics g) {
         setBackground(new Color (0,0,0,0));
         g.setColor(Color.WHITE);
-        g.drawString("Version 1.0 (2023.17.04)",20,20);
+        g.drawString("Version 1.0 (2023.24.04)",20,20);
         g.drawString("Screen Width: " + screenWidth,20,40);
         g.drawString("Screen Height: " + screenHeight,20,60);
     } //Version and Screen Info
@@ -80,7 +82,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             ControlsMenuLabel = new JLabel();
             ControlsMenuLabel.setHorizontalAlignment(0);
             ControlsMenuLabel.setBounds(theControlsMenuLabelx, theControlsMenuLabely, theControlsMenuLabelWidth, theControlsMenuLabelHeight);
-            ControlsMenuLabel.setText("<html>This is the controls menu.<br/><br/>WASD is used to move.<br/>Q toggles quick movement.<br/>B toggles debug mode.<br/>C toggles the controls menu. </html>");
+            ControlsMenuLabel.setText("<html>This is the controls menu.<br/><br/>WASD is used to move.<br/>Q toggles quick movement.<br/>B toggles debug mode.<br/>C toggles the controls menu.<br/>M toggles the center label.</html>");
             ControlsMenuLabel.setVisible(false);
             mainframe.add(ControlsMenuLabel);
     }
@@ -124,8 +126,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     }
     public static void SpawnIsland(){
         Random rand = new Random();
-        theIslandLabelWidth = rand.nextInt(screenWidth/8,screenWidth*2/8);
-        theIslandLabelHeight = rand.nextInt(screenHeight/8,screenHeight*2/8);
+        theIslandLabelWidth = rand.nextInt(screenWidth*2/16,screenWidth*5/16);
+        theIslandLabelHeight = rand.nextInt(screenHeight*2/16,screenHeight*5/16);
         theIslandLabelx = rand.nextInt(0,screenWidth*11/12-theIslandLabelWidth);
         theIslandLabely = rand.nextInt(screenHeight/8,screenHeight-theIslandLabelHeight);
 
@@ -225,8 +227,46 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         theNPCLabel.setText("NPC");
         mainframe.add(theNPCLabel);
     }
-    public static void SpawnSunkenTreasure(){}//invisible until close, gains nothing, 5, or 15 pocket change upon collection.
-    public static void SpawnMysteryFood(){}//lose 5 movement or gain 5 or 15 movement points upon collection.
+    public static void SpawnSunkenTreasure(){
+        theSunkenTreasureLabelWidth = screenWidth/30;
+        theSunkenTreasureLabelHeight = screenHeight/40;
+        Random rand = new Random();
+        if(IslandSpawned){
+                theSunkenTreasureLabelx = rand.nextInt(theIslandLabelx, theIslandLabelx + theIslandLabelWidth - theSunkenTreasureLabelWidth);
+                theSunkenTreasureLabely = rand.nextInt(theIslandLabely + theSunkenTreasureLabelHeight, theIslandLabely + theIslandLabelHeight - theCharacterLabelHeight);
+        }
+        else {
+            theSunkenTreasureLabelx = rand.nextInt(theSunkenTreasureLabelWidth, screenWidth - theSunkenTreasureLabelWidth);
+            theSunkenTreasureLabely = rand.nextInt(theSunkenTreasureLabelHeight * 2, screenHeight);
+        }
+
+        theSunkenTreasureLabel = new JLabel();
+        theSunkenTreasureLabel.setHorizontalAlignment(0);
+        theSunkenTreasureLabel.setBounds (theSunkenTreasureLabelx, theSunkenTreasureLabely, theSunkenTreasureLabelWidth, theSunkenTreasureLabelHeight);
+        theSunkenTreasureLabel.setText("COIN?");
+        theSunkenTreasureLabel.setVisible(false);
+        mainframe.add(theSunkenTreasureLabel);
+    }//invisible until close, gain between 0 and 10 pocket change upon collection.
+    public static void SpawnMysteryFood(){
+        theMysteryFoodLabelWidth = screenWidth/30;
+        theMysteryFoodLabelHeight = screenHeight/40;
+        Random rand = new Random();
+        if(IslandSpawned){
+                theMysteryFoodLabelx = rand.nextInt(theIslandLabelx, theIslandLabelx + theIslandLabelWidth - theMysteryFoodLabelWidth);
+                theMysteryFoodLabely = rand.nextInt(theIslandLabely + theMysteryFoodLabelHeight, theIslandLabely + theIslandLabelHeight - theCharacterLabelHeight);
+        }
+        else {
+            theMysteryFoodLabelx = rand.nextInt(theMysteryFoodLabelWidth, screenWidth - theMysteryFoodLabelWidth);
+            theMysteryFoodLabely = rand.nextInt(theMysteryFoodLabelHeight * 2, screenHeight);
+        }
+
+        theMysteryFoodLabel = new JLabel();
+        theMysteryFoodLabel.setHorizontalAlignment(0);
+        theMysteryFoodLabel.setBounds (theMysteryFoodLabelx, theMysteryFoodLabely, theMysteryFoodLabelWidth, theMysteryFoodLabelHeight);
+        theMysteryFoodLabel.setText("FOOD?");
+        theMysteryFoodLabel.setVisible(false);
+        mainframe.add(theMysteryFoodLabel);
+    }//lose up to half movement cap or gain up to 20 movement points upon collection.
 
     // Checking and Update Methods
     public void CheckAndUpdate(){
@@ -236,6 +276,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         CheckFoodLoc();
         CheckCoinLoc();
         CheckNPCLoc();
+        CheckSunkenTreasureLoc();
+        CheckMysteryFoodLoc();
     }
     public static void UpdateScoreBoard(){
         theScoreLabel.setText("<html><center>Your score is " + Score + ". <br/> You made " + MovementsMade + " movements. <br/> You have " + (MovementCap - MovementsMade) + " movements left. <br/> You have " + PocketChange + " coins in pocket change.</center></html>");
@@ -347,6 +389,61 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             NearNPC = false;
         }
     }
+    public void CheckSunkenTreasureLoc(){
+        if(abs((theCharacterLabelx+theCharacterLabelWidth)/2-(theSunkenTreasureLabelx+theSunkenTreasureLabelWidth)/2)<10&&abs((theCharacterLabely+theCharacterLabelHeight)/2-(theSunkenTreasureLabely+theSunkenTreasureLabelHeight)/2)<30){
+            theSunkenTreasureLabel.setVisible(true);
+        }
+        if(abs((theCharacterLabelx+theCharacterLabelWidth)/2-(theSunkenTreasureLabelx+theSunkenTreasureLabelWidth)/2)<10&&abs((theCharacterLabely+theCharacterLabelHeight)/2-(theSunkenTreasureLabely+theSunkenTreasureLabelHeight)/2)<10){
+
+            Random CoinAmount = new Random();
+            int SunkenTreasureWorth = CoinAmount.nextInt(0,10);
+
+            PocketChange = PocketChange + SunkenTreasureWorth;
+            UpdateScoreBoard();
+
+            theCenterLabel.setText("<html><center>You found a small treasure!</center></html>");
+
+            Random rand = new Random();
+            if(IslandSpawned){
+                theSunkenTreasureLabelx = rand.nextInt(theIslandLabelx+theSunkenTreasureLabelWidth,theIslandLabelx+theIslandLabelWidth-theSunkenTreasureLabelWidth);
+                theSunkenTreasureLabely = rand.nextInt(theIslandLabely+theSunkenTreasureLabelHeight,theIslandLabely+theIslandLabelHeight-theSunkenTreasureLabelHeight);
+            }
+            else {
+                theSunkenTreasureLabelx = rand.nextInt(theSunkenTreasureLabelWidth, screenWidth - 2 * theSunkenTreasureLabelWidth);
+                theSunkenTreasureLabely = rand.nextInt(theSunkenTreasureLabelHeight, screenHeight - 2 * theSunkenTreasureLabelHeight);
+            }
+            theSunkenTreasureLabel.setVisible(false);
+            theSunkenTreasureLabel.setBounds(theSunkenTreasureLabelx,theSunkenTreasureLabely,theSunkenTreasureLabelWidth,theSunkenTreasureLabelHeight);
+        }
+    }
+    public void CheckMysteryFoodLoc(){
+        if(abs((theCharacterLabelx+theCharacterLabelWidth)/2-(theMysteryFoodLabelx+theMysteryFoodLabelWidth)/2)<10&&abs((theCharacterLabely+theCharacterLabelHeight)/2-(theMysteryFoodLabely+theMysteryFoodLabelHeight)/2)<30){
+            theMysteryFoodLabel.setVisible(true);
+        }
+        if(abs((theCharacterLabelx+theCharacterLabelWidth)/2-(theMysteryFoodLabelx+theMysteryFoodLabelWidth)/2)<10&&abs((theCharacterLabely+theCharacterLabelHeight)/2-(theMysteryFoodLabely+theMysteryFoodLabelHeight)/2)<10){
+
+            Random FoodAmount = new Random();
+            int MysteryFoodWorth = FoodAmount.nextInt(-(MovementCap/2),20);
+
+            MovementCap = MovementCap + MysteryFoodWorth;
+            UpdateScoreBoard();
+
+            theCenterLabel.setText("<html><center>You ate some mystery food you found...</center></html>");
+
+            Random rand = new Random();
+            if(IslandSpawned){
+                theMysteryFoodLabelx = rand.nextInt(theIslandLabelx+theMysteryFoodLabelWidth,theIslandLabelx+theIslandLabelWidth-theMysteryFoodLabelWidth);
+                theMysteryFoodLabely = rand.nextInt(theIslandLabely+theMysteryFoodLabelHeight,theIslandLabely+theIslandLabelHeight-theMysteryFoodLabelHeight);
+            }
+            else {
+                theMysteryFoodLabelx = rand.nextInt(theMysteryFoodLabelWidth, screenWidth - 2 * theMysteryFoodLabelWidth);
+                theMysteryFoodLabely = rand.nextInt(theMysteryFoodLabelHeight, screenHeight - 2 * theMysteryFoodLabelHeight);
+            }
+            theMysteryFoodLabel.setVisible(false);
+            theMysteryFoodLabel.setBounds(theMysteryFoodLabelx,theMysteryFoodLabely,theMysteryFoodLabelWidth,theMysteryFoodLabelHeight);
+        }
+    }
+
     public void CheckLoseConditions(){
         if(MovementsMade>=MovementCap){
             Locked = true;
@@ -358,7 +455,17 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
 
     // Misc. Methods
     public static void MainframeTitleSetter(){
-        mainframe.setTitle("This is, in fact, the main frame");
+        Random rand = new Random();
+        int TitleSelector = rand.nextInt(0,6);
+        switch (TitleSelector){
+            case 0 -> mainframe.setTitle("*Insert Default Title*");
+            case 1 -> mainframe.setTitle("This is, in fact, the main frame.");
+            case 2 -> mainframe.setTitle("I don't remember this window...");
+            case 3 -> mainframe.setTitle("Yeah, so here's a virtual container.");
+            case 4 -> mainframe.setTitle("Another day, another game.");
+            case 5 -> mainframe.setTitle("Hello :) Have a nice day");
+            default -> mainframe.setTitle("Was this an error?");
+        }
     }
 
     @Override
@@ -488,6 +595,16 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                         theCenterLabel.setText("You are not near an NPC.");
                     }
                 } //Toggles Trading Menu
+                case KeyEvent.VK_M -> {
+                    if(CenterLabelVisibility){
+                        theCenterLabel.setVisible(false);
+                        CenterLabelVisibility =false;
+                    }
+                    else{
+                        theCenterLabel.setVisible(true);
+                        CenterLabelVisibility =true;
+                    }
+                } //Toggles Middle Menu
 
                 //Debug Mode
                 case (KeyEvent.VK_UP) -> {
@@ -595,6 +712,11 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                     theCenterLabel.setText("Trading Menu Closed.");
                 }
             }
+            case KeyEvent.VK_M -> {
+                if(CenterLabelVisibility) {
+                    theCenterLabel.setText("Center Label Opened.");
+                }
+            }
             //default -> theCenterLabel.setText ("Press F12 to exit.");
         }
         KeyPressed=false;
@@ -635,6 +757,8 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         SpawnFood();
         SpawnCoin();
         SpawnNPC();
+        SpawnSunkenTreasure();
+        SpawnMysteryFood();
 
         mainframe.setUndecorated(true);
         mainframe.add(D);
