@@ -260,7 +260,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         theMysteryFoodLabel.setText("FOOD?");
         theMysteryFoodLabel.setVisible(false);
         mainframe.add(theMysteryFoodLabel);
-    }//lose up to half movement cap or gain up to 20 movement points upon collection.
+    }//randomly lose up to half movement cap or gain up to 20 movement points upon collection.
 
     // Checking and Update Methods
     public void CheckAndUpdate(){
@@ -417,7 +417,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         if(abs((theCharacterLabelx+theCharacterLabelWidth)/2-(theMysteryFoodLabelx+theMysteryFoodLabelWidth)/2)<10&&abs((theCharacterLabely+theCharacterLabelHeight)/2-(theMysteryFoodLabely+theMysteryFoodLabelHeight)/2)<10){
 
             Random FoodAmount = new Random();
-            int MysteryFoodWorth = FoodAmount.nextInt(-(MovementCap/2),20);
+            int MysteryFoodWorth = FoodAmount.nextInt(-((MovementCap - MovementsMade)/2),20);
 
             MovementCap = MovementCap + MysteryFoodWorth;
             UpdateScoreBoard();
@@ -437,7 +437,6 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             theMysteryFoodLabel.setBounds(theMysteryFoodLabelx,theMysteryFoodLabely,theMysteryFoodLabelWidth,theMysteryFoodLabelHeight);
         }
     }
-
     public void CheckLoseConditions(){
         if(MovementsMade>=MovementCap){
             Locked = true;
@@ -460,6 +459,13 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             case 5 -> mainframe.setTitle("Hello :) Have a nice day");
             default -> mainframe.setTitle("Was this an error?");
         }
+    }
+    public static void CenterIsland(){
+        theIslandLabelx=screenWidth/2-(theIslandLabelWidth/2);
+        theIslandLabely=screenHeight/2-(theIslandLabelHeight/2);
+    }
+    public static void UpdatetoScreenSize(){
+
     }
 
     @Override
@@ -563,7 +569,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                     CheckAndUpdate();
                 } //Right
 
-                //Non-Movement Controls
+                //Non-Movement In-Game Controls
                 case KeyEvent.VK_C -> {
                     if(ControlsMenuVisibility){
                         ControlsMenuLabel.setVisible(false);
@@ -642,6 +648,21 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                     }
                 } //Currently Increases Score
 
+                //Fullscreen Toggle ?
+                case KeyEvent.VK_F1 -> {
+                    if(screenWidth == (int)size.getWidth() && screenHeight == (int)size.getHeight()){
+                        screenWidth = screenWidth/2;
+                        screenHeight = screenHeight/2;
+                        mainframe.setSize(screenWidth, screenHeight);
+
+                    }
+                    else {
+                        screenWidth = (int)size.getWidth();
+                        screenHeight = (int)size.getHeight();
+                        mainframe.setSize(screenWidth, screenHeight);
+                    }
+                }
+
                 //General Key Events
                 case KeyEvent.VK_SHIFT -> theCenterLabel.setText("SHIFT Key Pressed");
                 case KeyEvent.VK_CAPS_LOCK -> theCenterLabel.setText("CAPS LOCK Key Pressed");
@@ -649,7 +670,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
                 case KeyEvent.VK_BACK_SPACE -> theCenterLabel.setText("BACKSPACE Key Pressed");
                 case KeyEvent.VK_ENTER -> theCenterLabel.setText("ENTER Key Pressed");
                 case KeyEvent.VK_SPACE -> theCenterLabel.setText("SPACE Key Pressed");
-                case KeyEvent.VK_F1 -> theCenterLabel.setText("F1 Key Pressed");
+                //case KeyEvent.VK_F1 -> theCenterLabel.setText("F1 Key Pressed");
                 case KeyEvent.VK_F2 -> theCenterLabel.setText("F2 Key Pressed");
                 case KeyEvent.VK_F3 -> theCenterLabel.setText("F3 Key Pressed");
                 case KeyEvent.VK_F4 -> theCenterLabel.setText("F4 Key Pressed");
