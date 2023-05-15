@@ -37,7 +37,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
 
     // Other Misc.
     public static int keyCode;
-    public static boolean QuickMovement = true, KeyPressed, Locked, IslandSpawned, SecondIslandSpawned, NearNPC = false;
+    public static boolean QuickMovement = true, KeyPressed, Locked, IslandSpawned, SecondIslandSpawned, NearNPC = false, ItemSpawnProgression=false, NewItemSpawned=false;
     public static boolean UpperBoundaryReached, LeftBoundaryReached, BottomBoundaryReached, RightBoundaryReached, BoundaryReached;
 
     public void paint(Graphics g) {
@@ -261,6 +261,9 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         theMysteryFoodLabel.setVisible(false);
         mainframe.add(theMysteryFoodLabel);
     }//randomly lose up to half movement cap or gain up to 20 movement points upon collection.
+    public static void AddItemSpawnProgression(){
+        ItemSpawnProgression=true;
+    }
 
     // Checking and Update Methods
     public void CheckAndUpdate(){
@@ -272,6 +275,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         CheckNPCLoc();
         CheckSunkenTreasureLoc();
         CheckMysteryFoodLoc();
+        CheckItemProgression();
     }
     public static void UpdateScoreBoard(){
         theScoreLabel.setText("<html><center>Your score is " + Score + ". <br/> You made " + MovementsMade + " movements. <br/> You have " + (MovementCap - MovementsMade) + " movements left. <br/> You have " + PocketChange + " coins in pocket change.</center></html>");
@@ -437,6 +441,47 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             theMysteryFoodLabel.setBounds(theMysteryFoodLabelx,theMysteryFoodLabely,theMysteryFoodLabelWidth,theMysteryFoodLabelHeight);
         }
     }
+    public void CheckItemProgression(){
+        if(ItemSpawnProgression&&!NewItemSpawned&&Score!=0&&Score%10==0){
+            Random rand = new Random();
+            int ItemSelector = rand.nextInt(0,4);
+            switch (ItemSelector){
+                case 0 -> {
+                    SpawnFood();
+                    mainframe.repaint();
+                    mainframe.revalidate();
+                    theCenterLabel.setText("Food Spawned");
+                }
+                case 1 -> {
+                    SpawnCoin();
+                    mainframe.repaint();
+                    mainframe.revalidate();
+                    theCenterLabel.setText("Coin Spawned");
+                }
+                case 2 -> {
+                    SpawnNPC();
+                    mainframe.repaint();
+                    mainframe.revalidate();
+                    theCenterLabel.setText("NPC Spawned");
+                }
+                case 3 -> {
+                    SpawnMysteryFood();
+                    mainframe.repaint();
+                    mainframe.revalidate();
+                    theCenterLabel.setText("Mystery Food Spawned");
+                }
+                case 4 -> {
+                    SpawnSunkenTreasure();
+                    mainframe.repaint();
+                    mainframe.revalidate();
+                    theCenterLabel.setText("Sunken Treasure Spawned");
+                }
+                default -> theCenterLabel.setText("No Item Spawned");
+            }
+            NewItemSpawned = true;
+        }
+        if (Score%10!=0){NewItemSpawned=false;}
+    }
     public void CheckLoseConditions(){
         if(MovementsMade>=MovementCap){
             Locked = true;
@@ -449,7 +494,7 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
     // Misc. Methods
     public static void MainframeTitleSetter(){
         Random rand = new Random();
-        int TitleSelector = rand.nextInt(0,6);
+        int TitleSelector = rand.nextInt(0,9);
         switch (TitleSelector){
             case 0 -> mainframe.setTitle("*Insert Default Title*");
             case 1 -> mainframe.setTitle("This is, in fact, the main frame.");
@@ -457,7 +502,10 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
             case 3 -> mainframe.setTitle("Yeah, so here's a virtual container.");
             case 4 -> mainframe.setTitle("Another day, another game.");
             case 5 -> mainframe.setTitle("Hello :) Have a nice day");
-            default -> mainframe.setTitle("Was this an error?");
+            case 6 -> mainframe.setTitle("Aaaaaahhhh!!!!");
+            case 7 -> mainframe.setTitle("Welp... Here we go again...");
+            case 8 -> mainframe.setTitle("Was this an error?");
+            default -> mainframe.setTitle("This was probably an error...");
         }
     }
     public static void CenterIsland(){
@@ -770,10 +818,11 @@ public class TheMainDisplay extends Canvas implements KeyListener, MouseListener
         //SpawnSecondIsland();
         SpawnCharacter();
         SpawnFood();
-        SpawnCoin();
+        AddItemSpawnProgression();
+       /* SpawnCoin();
         SpawnNPC();
         SpawnSunkenTreasure();
-        SpawnMysteryFood();
+        SpawnMysteryFood();*/
 
         mainframe.setUndecorated(true);
         mainframe.add(D);
